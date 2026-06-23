@@ -1,0 +1,35 @@
+{
+  "name": "InspectOA — Inspection Ouvrages d'Art",
+  "short_name": "InspectOA",
+  "description": "Application terrain d'inspection des ouvrages d'art — méthode IQOA / CEREMA",
+  "start_url": "/index.html?pwa=1",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0F1923",
+  "theme_color": "#0F1923",
+  "lang": "fr-FR",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouvelle inspection",
+      "short_name": "Inspecter",
+      "description": "Démarrer une nouvelle inspection terrain",
+      "url": "/index.html?action=new",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mes relevés",
+      "short_name": "Relevés",
+      "description": "Consulter les relevés enregistrés",
+      "url": "/index.html?screen=liste",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

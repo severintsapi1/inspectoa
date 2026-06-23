@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="InspectOA">
+<meta name="theme-color" content="#0F1923">
+<title>InspectOA v4</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0F1923;--bg2:#162030;--bg3:#1E2D3D;--bg4:#243345;
+  --accent:#2E7FE8;--accent2:#1B5FC7;--danger:#E84040;--warn:#E8A020;--ok:#28C76F;
+  --text:#E8EDF2;--text2:#8FA4BB;--text3:#526070;
+  --border:#243345;--border2:#2E4055;
+  --r:10px;--r2:14px;
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-top:var(--sat);padding-bottom:var(--sab)}
+button{cursor:pointer;font-family:inherit;font-size:14px;border:none;background:none;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+input,select,textarea{font-family:inherit;font-size:16px;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:var(--r);padding:11px 13px;width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px;font-size:14px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238FA4BB' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+#app{max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;z-index:10}
+.hdr-title{font-size:16px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-sub{font-size:12px;color:var(--text2)}
+.back{width:38px;height:38px;border-radius:9px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text2);flex-shrink:0}
+.logo{font-size:13px;font-weight:700;color:var(--accent);background:rgba(46,127,232,.12);padding:5px 9px;border-radius:7px;letter-spacing:.04em;flex-shrink:0}
+.content{flex:1;padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.bnav{background:var(--bg2);border-top:1px solid var(--border);display:flex;padding:6px 0;padding-bottom:calc(6px + var(--sab));flex-shrink:0}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 0;color:var(--text3);font-size:11px;min-height:50px;justify-content:center}
+.ni.on{color:var(--accent)}
+.ni-icon{font-size:22px;line-height:1}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:10px}
+.bdg{display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;padding:3px 9px;border-radius:5px}
+.b1{background:rgba(40,199,111,.15);color:#28C76F}
+.b2{background:rgba(46,127,232,.15);color:#2E7FE8}
+.b2e{background:rgba(232,160,32,.15);color:#E8A020}
+.b3{background:rgba(232,112,32,.15);color:#E87020}
+.b3u{background:rgba(232,64,64,.18);color:#E84040}
+.sec{font-size:11px;font-weight:600;letter-spacing:.07em;color:var(--text3);text-transform:uppercase;margin:18px 0 8px}
+.sec:first-child{margin-top:0}
+.frow{margin-bottom:12px}
+.flbl{font-size:12px;color:var(--text2);margin-bottom:6px;display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chk-grp{display:flex;flex-wrap:wrap;gap:7px}
+.chk-item input{display:none}
+.chk-item label{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:8px 13px;font-size:13px;cursor:pointer;color:var(--text2);display:block}
+.chk-item input:checked+label{background:rgba(46,127,232,.18);border-color:var(--accent);color:var(--text)}
+.iq-grp{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.iq-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:10px 4px;text-align:center;cursor:pointer;font-size:14px;font-weight:700;color:var(--text2);min-height:46px;display:flex;align-items:center;justify-content:center}
+.iq-btn.s1{background:rgba(40,199,111,.2);border-color:#28C76F;color:#28C76F}
+.iq-btn.s2{background:rgba(46,127,232,.2);border-color:#2E7FE8;color:#2E7FE8}
+.iq-btn.s2e{background:rgba(232,160,32,.2);border-color:#E8A020;color:#E8A020}
+.iq-btn.s3{background:rgba(232,112,32,.2);border-color:#E87020;color:#E87020}
+.iq-btn.s3u{background:rgba(232,64,64,.22);border-color:#E84040;color:#E84040}
+.btn-p{background:var(--accent);color:#fff;border-radius:var(--r);padding:14px 20px;font-size:15px;font-weight:600;width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
+.btn-p:active{background:var(--accent2)}
+.btn-p:disabled{background:var(--bg4);color:var(--text3)}
+.btn-s{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;font-size:14px;font-weight:500;min-height:48px}
+.btn-s:active{background:var(--bg4)}
+.btn-d{background:rgba(232,64,64,.15);color:var(--danger);border:1px solid rgba(232,64,64,.3);border-radius:var(--r);padding:12px 16px;font-size:14px;min-height:48px}
+.ugb{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:9px 4px;text-align:center;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);min-height:42px}
+.ugb.on{background:rgba(46,127,232,.2);border-color:var(--accent);color:var(--text)}
+.sr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 10px;text-align:center}
+.sn{font-size:24px;font-weight:700}
+.sl{font-size:11px;color:var(--text2);margin-top:2px}
+.oa-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:66px}
+.oa-row:active{background:var(--bg3)}
+.pbr{height:4px;background:var(--bg3);flex-shrink:0;overflow:hidden}
+.pf{height:100%;background:var(--accent);transition:width .3s}
+.div{height:1px;background:var(--border);margin:16px 0}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.pth{position:relative;aspect-ratio:4/3;border-radius:8px;overflow:hidden;cursor:pointer;background:var(--bg3)}
+.pth img{width:100%;height:100%;object-fit:cover}
+.pdel{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center}
+.pnum{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px}
+.pgps{position:absolute;bottom:4px;right:4px;background:rgba(40,199,111,.8);color:#fff;font-size:9px;font-weight:700;padding:2px 4px;border-radius:3px}
+.pann{position:absolute;top:4px;left:4px;background:rgba(46,127,232,.8);color:#fff;font-size:9px;font-weight:700;padding:2px 4px;border-radius:3px}
+.padd{aspect-ratio:4/3;border-radius:8px;background:var(--bg3);border:1px dashed var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:11px;gap:4px}
+.padd:active{border-color:var(--accent);color:var(--accent)}
+.gps-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(40,199,111,.12);border:1px solid rgba(40,199,111,.3);border-radius:20px;padding:4px 10px;font-size:11px;color:#28C76F}
+.gps-pill.w{background:rgba(232,160,32,.12);border-color:rgba(232,160,32,.3);color:var(--warn)}
+.gps-pill.e{background:rgba(232,64,64,.12);border-color:rgba(232,64,64,.3);color:var(--danger)}
+.sync-banner{background:rgba(46,127,232,.1);border:1px solid rgba(46,127,232,.25);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer}
+.sync-banner.w{background:rgba(232,160,32,.1);border-color:rgba(232,160,32,.25)}
+#pdf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:300;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+#pdf-overlay.on{display:flex}
+.ppb{width:260px;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.ppf{height:100%;background:var(--accent);border-radius:3px;transition:width .35s}
+#install-banner{display:none;background:rgba(40,199,111,.1);border:1px solid rgba(40,199,111,.3);border-radius:var(--r);padding:11px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px}
+#cam-ov{position:fixed;inset:0;background:#000;z-index:100;display:none;flex-direction:column}
+#cam-ov.on{display:flex}
+#cam-v{width:100%;flex:1;object-fit:cover;background:#111}
+#cam-c{display:none}
+.cam-bar{background:rgba(0,0,0,.72);padding:16px;display:flex;align-items:center;justify-content:space-around;gap:10px}
+.shutter{width:74px;height:74px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,.35);cursor:pointer;flex-shrink:0;transition:transform .1s}
+.shutter:active{transform:scale(.88)}
+.cam-fx{position:fixed;inset:0;background:#fff;z-index:150;opacity:0;pointer-events:none;transition:opacity .05s}
+.cam-fx.on{opacity:1}
+#ann-ov{position:fixed;inset:0;background:#000;z-index:110;display:none;flex-direction:column}
+#ann-ov.on{display:flex}
+#ann-c{flex:1;touch-action:none}
+.abar{background:rgba(0,0,0,.88);padding:10px 14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ac{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;flex-shrink:0;min-width:28px;min-height:28px}
+.ac.on{border-color:#fff}
+.at{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.15);color:#fff;font-size:15px;cursor:pointer;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;min-width:36px;min-height:36px}
+.at.on{background:rgba(46,127,232,.55);border-color:var(--accent)}
+#view-ov{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:120;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+#view-ov.on{display:flex}
+#view-img{max-width:100%;max-height:70vh;border-radius:8px;object-fit:contain}
+#toast{position:fixed;bottom:calc(76px + var(--sab));left:50%;transform:translateX(-50%);background:var(--bg4);border:1px solid var(--border2);border-radius:var(--r);padding:10px 18px;font-size:13px;color:var(--text);z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;max-width:360px;text-align:center;white-space:nowrap}
+#toast.on{opacity:1}
+.screen{display:none}
+.screen.on{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.deg-row{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:11px 13px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── HOME ─────────────────────────────────────────────────── -->
+<div class="screen on" id="s-home">
+  <div class="hdr">
+    <span class="logo">InspectOA</span>
+    <div style="flex:1;padding-left:8px">
+      <div class="hdr-title">Terrain</div>
+      <div class="hdr-sub" id="hd"></div>
+    </div>
+    <div id="gps-hdr" class="gps-pill w" style="font-size:10px;flex-shrink:0">⊙ GPS…</div>
+  </div>
+  <div class="content">
+    <div id="install-banner" onclick="doInstall()">
+      <span style="font-size:20px">📲</span>
+      <div><div style="font-weight:600;color:#28C76F">Installer l'application</div>
+        <div style="font-size:11px;color:var(--text2)">Ajouter à l'écran d'accueil pour une utilisation hors ligne</div></div>
+    </div>
+    <div id="upd-banner" style="display:none;background:rgba(46,127,232,.1);border:1px solid rgba(46,127,232,.25);border-radius:var(--r);padding:10px 14px;margin-bottom:12px;font-size:13px;cursor:pointer;color:var(--accent)" onclick="applyUpdate()">
+      ↑ Mise à jour disponible — appuyer pour installer
+    </div>
+    <div class="sr">
+      <div class="sc"><div class="sn">5</div><div class="sl">Ouvrages</div></div>
+      <div class="sc"><div class="sn" id="st-insp">0</div><div class="sl">Inspections</div></div>
+      <div class="sc"><div class="sn" id="st-ph">0</div><div class="sl">Photos</div></div>
+    </div>
+    <div id="sync-banner-home"></div>
+    <div id="gps-banner"></div>
+    <div class="sec">Ouvrages assignés</div>
+    <div id="oa-list"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni on" onclick="nav('home')"><span class="ni-icon">⌂</span><span>Accueil</span></button>
+    <button class="ni" onclick="nav('liste')"><span class="ni-icon">☰</span><span>Relevés</span></button>
+    <button class="ni" onclick="nav('photos')"><span class="ni-icon">📷</span><span>Photos</span></button>
+    <button class="ni" onclick="nav('param')"><span class="ni-icon">⚙</span><span>Réglages</span></button>
+  </div>
+</div>
+
+<!-- ── LISTE RELEVÉS ─────────────────────────────────────────── -->
+<div class="screen" id="s-liste">
+  <div class="hdr">
+    <span class="logo">InspectOA</span>
+    <div style="flex:1;padding-left:8px"><div class="hdr-title">Mes relevés</div></div>
+    <button class="btn-s" style="padding:8px 13px;font-size:13px;min-height:auto" onclick="newReleve()">+ Nouveau</button>
+  </div>
+  <div class="content"><div id="rel-list"></div></div>
+  <div class="bnav">
+    <button class="ni" onclick="nav('home')"><span class="ni-icon">⌂</span><span>Accueil</span></button>
+    <button class="ni on" onclick="nav('liste')"><span class="ni-icon">☰</span><span>Relevés</span></button>
+    <button class="ni" onclick="nav('photos')"><span class="ni-icon">📷</span><span>Photos</span></button>
+    <button class="ni" onclick="nav('param')"><span class="ni-icon">⚙</span><span>Réglages</span></button>
+  </div>
+</div>
+
+<!-- ── PHOTOS ─────────────────────────────────────────────────── -->
+<div class="screen" id="s-photos">
+  <div class="hdr">
+    <span class="logo">InspectOA</span>
+    <div style="flex:1;padding-left:8px"><div class="hdr-title">Photos terrain</div></div>
+    <button class="btn-p" style="width:auto;padding:8px 14px;font-size:13px;min-height:auto" onclick="openCam(null)">📷</button>
+  </div>
+  <div class="content"><div id="ph-lib"></div></div>
+  <div class="bnav">
+    <button class="ni" onclick="nav('home')"><span class="ni-icon">⌂</span><span>Accueil</span></button>
+    <button class="ni" onclick="nav('liste')"><span class="ni-icon">☰</span><span>Relevés</span></button>
+    <button class="ni on" onclick="nav('photos')"><span class="ni-icon">📷</span><span>Photos</span></button>
+    <button class="ni" onclick="nav('param')"><span class="ni-icon">⚙</span><span>Réglages</span></button>
+  </div>
+</div>
+
+<!-- ── OA DÉTAIL ─────────────────────────────────────────────── -->
+<div class="screen" id="s-oa">
+  <div class="hdr">
+    <button class="back" onclick="goBack()">←</button>
+    <div style="flex:1;min-width:0;margin-left:6px">
+      <div class="hdr-title" id="oa-name"></div>
+      <div class="hdr-sub" id="oa-sub"></div>
+    </div>
+    <button class="btn-p" style="width:auto;padding:8px 12px;font-size:13px;min-height:auto;flex-shrink:0" onclick="startInsp()">Inspecter</button>
+  </div>
+  <div class="content" id="oa-body"></div>
+</div>
+
+<!-- ── FORMULAIRE ─────────────────────────────────────────────── -->
+<div class="screen" id="s-form">
+  <div class="hdr">
+    <button class="back" onclick="backForm()">←</button>
+    <div style="flex:1;min-width:0;margin-left:6px">
+      <div class="hdr-title" id="fm-oa"></div>
+      <div class="hdr-sub" id="fm-step">Étape 1 / 4</div>
+    </div>
+    <button class="btn-s" style="padding:8px 10px;font-size:12px;min-height:auto;flex-shrink:0" onclick="saveDraft()">Brouillon</button>
+  </div>
+  <div class="pbr"><div class="pf" id="fm-bar" style="width:25%"></div></div>
+  <div class="content" id="fm-body"></div>
+</div>
+
+<!-- ── DÉTAIL RELEVÉ ─────────────────────────────────────────── -->
+<div class="screen" id="s-releve">
+  <div class="hdr">
+    <button class="back" onclick="goBack()">←</button>
+    <div style="flex:1;min-width:0;margin-left:6px">
+      <div class="hdr-title" id="rv-title"></div>
+      <div class="hdr-sub" id="rv-sub"></div>
+    </div>
+    <span class="bdg" id="rv-bdg"></span>
+  </div>
+  <div class="content" id="rv-body"></div>
+</div>
+
+<!-- ── RÉGLAGES ───────────────────────────────────────────────── -->
+<div class="screen" id="s-param">
+  <div class="hdr">
+    <span class="logo">InspectOA</span>
+    <div style="flex:1;padding-left:8px"><div class="hdr-title">Réglages</div></div>
+  </div>
+  <div class="content">
+    <div class="sec">Profil</div>
+    <div class="card" style="display:flex;align-items:center;gap:13px">
+      <div style="width:46px;height:46px;border-radius:50%;background:rgba(46,127,232,.2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--accent);flex-shrink:0">SK</div>
+      <div>
+        <div style="font-weight:600;font-size:15px">S. Kaptue</div>
+        <div style="font-size:12px;color:var(--text2)">Ingénieur OA · COPREC N2</div>
+      </div>
+    </div>
+    <div class="sec">Synchronisation</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-size:13px">URL API serveur</span>
+      </div>
+      <input type="url" id="api-url" placeholder="https://votre-api.com/api" value="" oninput="saveApiUrl(this.value)">
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Laisser vide pour mode hors ligne pur</div>
+    </div>
+    <button class="btn-p" style="margin-bottom:10px" onclick="doSync()">↑ Synchroniser maintenant</button>
+    <div class="sec">Stockage local (IndexedDB)</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:13px">Relevés</span><span id="pr-rel" style="font-size:13px;font-weight:600">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:13px">Photos</span><span id="pr-ph" style="font-size:13px;font-weight:600">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-size:13px">En attente de sync</span><span id="pr-sync" style="font-size:13px;font-weight:600">—</span>
+      </div>
+    </div>
+    <div class="sec">Application</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:13px">Version</span><span style="font-size:12px;color:var(--text2)">InspectOA v4.0</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-size:13px">Référentiel IQOA</span><span style="font-size:12px;color:var(--ok)">CEREMA 2024</span>
+      </div>
+    </div>
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+      <button class="btn-s" onclick="exportAll()">⬇ Exporter toutes les données (JSON)</button>
+      <button class="btn-d" onclick="clearAll()">⚠ Effacer toutes les données locales</button>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="nav('home')"><span class="ni-icon">⌂</span><span>Accueil</span></button>
+    <button class="ni" onclick="nav('liste')"><span class="ni-icon">☰</span><span>Relevés</span></button>
+    <button class="ni" onclick="nav('photos')"><span class="ni-icon">📷</span><span>Photos</span></button>
+    <button class="ni on" onclick="nav('param')"><span class="ni-icon">⚙</span><span>Réglages</span></button>
+  </div>
+</div>
+
+</div><!-- /#app -->
+
+<!-- CAMERA -->
+<div id="cam-ov">
+  <div style="background:rgba(0,0,0,.75);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;padding-top:calc(13px + var(--sat))">
+    <button style="color:#fff;font-size:24px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center" onclick="closeCam()">✕</button>
+    <div id="cam-gps" style="font-size:11px;color:rgba(255,255,255,.7);text-align:center">⊙ GPS…</div>
+    <button style="color:#fff;font-size:22px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center" onclick="flipCam()">🔄</button>
+  </div>
+  <video id="cam-v" autoplay playsinline muted></video>
+  <canvas id="cam-c"></canvas>
+  <div id="grid-ov" style="position:absolute;top:60px;bottom:144px;left:0;right:0;pointer-events:none;display:none">
+    <svg width="100%" height="100%"><line x1="33%" y1="0" x2="33%" y2="100%" stroke="rgba(255,255,255,.3)" stroke-width="1"/><line x1="66%" y1="0" x2="66%" y2="100%" stroke="rgba(255,255,255,.3)" stroke-width="1"/><line x1="0" y1="33%" x2="100%" y2="33%" stroke="rgba(255,255,255,.3)" stroke-width="1"/><line x1="0" y1="66%" x2="100%" y2="66%" stroke="rgba(255,255,255,.3)" stroke-width="1"/></svg>
+  </div>
+  <div style="background:rgba(0,0,0,.6);padding:6px;display:flex;gap:6px;justify-content:center">
+    <button id="cm-n" style="background:rgba(46,127,232,.5);border:1px solid var(--accent);color:#fff;border-radius:6px;padding:7px 14px;font-size:13px" onclick="setMode('n')">Normal</button>
+    <button id="cm-g" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:7px 14px;font-size:13px" onclick="setMode('g')">Grille</button>
+    <button id="cm-m" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:7px 14px;font-size:13px" onclick="setMode('m')">Macro</button>
+  </div>
+  <div class="cam-bar" style="padding-bottom:calc(16px + var(--sab))">
+    <button style="color:#fff;font-size:28px;min-width:52px;min-height:52px;display:flex;align-items:center;justify-content:center" onclick="document.getElementById('gal-in').click()">🖼</button>
+    <button class="shutter" onclick="shoot()"></button>
+    <button style="color:#fff;font-size:24px;min-width:52px;min-height:52px;display:flex;align-items:center;justify-content:center" id="fl-btn" onclick="toggleFlash()">⚡</button>
+  </div>
+  <div class="cam-fx" id="cam-fx"></div>
+  <input type="file" id="gal-in" accept="image/*" style="display:none" onchange="fromGallery(event)">
+</div>
+
+<!-- ANNOTATION -->
+<div id="ann-ov">
+  <div style="background:rgba(0,0,0,.75);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;padding-top:calc(12px + var(--sat))">
+    <button style="color:#fff;font-size:24px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center" onclick="cancelAnn()">✕</button>
+    <span style="color:#fff;font-size:14px;font-weight:600">Annoter</span>
+    <button style="color:var(--accent);font-size:15px;font-weight:700;padding:8px;min-height:44px" onclick="saveAnn()">Sauvegarder</button>
+  </div>
+  <canvas id="ann-c" style="flex:1;touch-action:none"></canvas>
+  <div class="abar" style="padding-bottom:calc(10px + var(--sab))">
+    <div class="ac on" style="background:#FF3B30" data-c="#FF3B30" onclick="setAC(this)"></div>
+    <div class="ac" style="background:#FFD60A" data-c="#FFD60A" onclick="setAC(this)"></div>
+    <div class="ac" style="background:#30D158" data-c="#30D158" onclick="setAC(this)"></div>
+    <div class="ac" style="background:#0A84FF" data-c="#0A84FF" onclick="setAC(this)"></div>
+    <div class="ac" style="background:#fff" data-c="#fff" onclick="setAC(this)"></div>
+    <div style="width:1px;height:28px;background:rgba(255,255,255,.2);margin:0 2px"></div>
+    <button class="at on" data-t="pen" onclick="setAT(this)">✏</button>
+    <button class="at" data-t="arrow" onclick="setAT(this)">➜</button>
+    <button class="at" data-t="rect" onclick="setAT(this)">▭</button>
+    <button class="at" data-t="text" onclick="setAT(this)">T</button>
+    <button class="at" data-t="erase" onclick="setAT(this)">⌫</button>
+    <div style="flex:1"></div>
+    <button style="color:rgba(255,255,255,.65);font-size:13px;padding:8px;min-height:44px" onclick="undoAnn()">↩</button>
+  </div>
+</div>
+
+<!-- VIEWER -->
+<div id="view-ov" onclick="closeView()">
+  <img id="view-img" onclick="event.stopPropagation()" style="max-width:100%;max-height:68vh;border-radius:8px;object-fit:contain">
+  <div id="view-info" style="background:rgba(0,0,0,.65);padding:8px 14px;border-radius:8px;margin-top:8px;font-size:11px;color:rgba(255,255,255,.8);text-align:center"></div>
+  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center" onclick="event.stopPropagation()">
+    <button style="background:rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;min-height:46px" onclick="annCurr()">✏ Annoter</button>
+    <button style="background:rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;min-height:46px" onclick="dlCurr()">⬇ Sauvegarder</button>
+    <button style="background:rgba(232,64,64,.25);color:#E84040;border-radius:8px;padding:10px 16px;font-size:14px;min-height:46px" onclick="delCurr()">🗑</button>
+  </div>
+</div>
+
+<!-- PDF -->
+<div id="pdf-overlay">
+  <div style="font-size:17px;font-weight:600;color:#fff">Génération du rapport…</div>
+  <div class="ppb"><div class="ppf" id="ppf" style="width:0%"></div></div>
+  <div style="font-size:13px;color:rgba(255,255,255,.6)" id="ppl">Initialisation</div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+'use strict';
+
+// ══════════════════════════════════════════════════════════════
+// IndexedDB
+// ══════════════════════════════════════════════════════════════
+const DB_NAME='InspectOA',DB_VER=1;let _idb=null;
+
+async function idbOpen(){
+  if(_idb)return _idb;
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DB_NAME,DB_VER);
+    r.onupgradeneeded=e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains('releves')){
+        const s=db.createObjectStore('releves',{keyPath:'id'});
+        s.createIndex('oaId','oaId',{unique:false});
+        s.createIndex('savedAt','savedAt',{unique:false});
+      }
+      if(!db.objectStoreNames.contains('photos')){
+        const s=db.createObjectStore('photos',{keyPath:'id'});
+        s.createIndex('oaId','oaId',{unique:false});
+        s.createIndex('ts','ts',{unique:false});
+      }
+      if(!db.objectStoreNames.contains('syncq')){
+        const s=db.createObjectStore('syncq',{keyPath:'id',autoIncrement:true});
+        s.createIndex('status','status',{unique:false});
+      }
+    };
+    r.onsuccess=e=>{_idb=e.target.result;res(_idb);};
+    r.onerror=e=>rej(e.target.error);
+  });
+}
+
+function idbTx(store,mode='readonly'){return _idb.transaction(store,mode).objectStore(store);}
+function idbWrap(r){return new Promise((res,rej)=>{r.onsuccess=e=>res(e.target.result);r.onerror=e=>rej(e.target.error);});}
+function idbAll(store,idx,val){const s=idbTx(store);return idbWrap(idx?s.index(idx).getAll(val):s.getAll());}
+function idbGet(store,id){return idbWrap(idbTx(store).get(id));}
+function idbPut(store,item){return idbWrap(idbTx(store,'readwrite').put(item));}
+function idbDel(store,id){return idbWrap(idbTx(store,'readwrite').delete(id));}
+function idbCount(store){return idbWrap(idbTx(store).count());}
+
+// Relevés
+async function dbSaveRel(r){return idbPut('releves',{...r,updatedAt:now()});}
+async function dbGetRel(id){return idbGet('releves',id);}
+async function dbAllRels(){const a=await idbAll('releves');return a.sort((a,b)=>(b.savedAt||'').localeCompare(a.savedAt||''));}
+async function dbDelRel(id){return idbDel('releves',id);}
+
+// Photos
+async function dbSavePh(p){return idbPut('photos',{...p,updatedAt:now()});}
+async function dbGetPh(id){return idbGet('photos',id);}
+async function dbPhsByOA(oaId){const a=await idbAll('photos','oaId',oaId);return a.sort((a,b)=>(b.ts||'').localeCompare(a.ts||''));}
+async function dbAllPhs(){const a=await idbAll('photos');return a.sort((a,b)=>(b.ts||'').localeCompare(a.ts||''));}
+async function dbDelPh(id){return idbDel('photos',id);}
+
+// Sync queue
+async function dbEnqueue(item){return idbPut('syncq',{...item,status:'pending',at:now()});}
+async function dbPending(){return idbAll('syncq','status','pending');}
+async function dbMarkDone(id){const i=await idbGet('syncq',id);if(i){i.status='done';i.sentAt=now();return idbPut('syncq',i);}}
+
+async function getStats(){
+  const [rels,phs,pend]=await Promise.all([dbAllRels(),dbAllPhs(),dbPending()]);
+  return{rels:rels.length,phs:phs.length,pend:pend.length,urgent:rels.filter(r=>r.cotation==='3U').length};
+}
+
+// ══════════════════════════════════════════════════════════════
+// Données métier
+// ══════════════════════════════════════════════════════════════
+const OAS=[
+  {id:'oa1',nom:'Pont RN7 — Allier',type:'Pont à poutres BP',commune:'Varennes-sur-Allier (03)',pr:'142+340',annee:1974,longueur:87.5,travees:3,portee:34.2,largeur:10.8,materiaux:'Béton précontraint',gestionnaire:'DIR Massif Central',classe_charge:'Bc',franchissement:'Rivière Allier',cotation:'3U'},
+  {id:'oa2',nom:'Mur soutènement D906',type:'Mur de soutènement',commune:'Moulins (03)',pr:'14+820',annee:1988,longueur:45.0,travees:1,portee:0,largeur:0,materiaux:'Béton armé',gestionnaire:'CD Allier',classe_charge:'-',franchissement:'Route',cotation:'2'},
+  {id:'oa3',nom:'Viaduc A75 pile P12',type:'Viaduc autoroutier',commune:'Issoire (63)',pr:'284+100',annee:2001,longueur:620.0,travees:18,portee:38.0,largeur:15.6,materiaux:'Béton précontraint',gestionnaire:'DIR MC',classe_charge:'Mc120',franchissement:'Vallée Couze',cotation:'1'},
+  {id:'oa4',nom:'Pont ferroviaire K4',type:'Pont ferroviaire',commune:'Clermont-Fd (63)',pr:'KM 342+640',annee:1965,longueur:32.0,travees:2,portee:15.5,largeur:6.2,materiaux:'Métal',gestionnaire:'SNCF Réseau',classe_charge:'D4',franchissement:'Allier',cotation:'3'},
+  {id:'oa5',nom:'Pont du Moulin',type:'Pont dalle',commune:'Vichy (03)',pr:'26+180',annee:1978,longueur:18.0,travees:1,portee:17.0,largeur:8.4,materiaux:'Béton armé',gestionnaire:'Commune Vichy',classe_charge:'B',franchissement:'Sichon',cotation:'2E'},
+];
+const ELEMS=[
+  {id:'e1',fam:'Fondations',lib:'Appuis (piles, culées)'},
+  {id:'e2',fam:'Fondations',lib:'Affouillement / Érosion'},
+  {id:'e3',fam:'Tablier',lib:'Intrados dalle / hourdis'},
+  {id:'e4',fam:'Tablier',lib:'Poutres principales'},
+  {id:'e5',fam:'Tablier',lib:'Fissures'},
+  {id:'e6',fam:'Tablier',lib:'Corrosion armatures'},
+  {id:'e7',fam:'Chaussée',lib:'Revêtement / Roulement'},
+  {id:'e8',fam:'Chaussée',lib:'Joints de dilatation'},
+  {id:'e9',fam:'Chaussée',lib:'Garde-corps / Glissières'},
+  {id:'e10',fam:'Équipements',lib:'Drains / Chéneaux'},
+];
+const IQS=['1','2','2E','3','3U'];
+
+// ══════════════════════════════════════════════════════════════
+// État global
+// ══════════════════════════════════════════════════════════════
+const G={
+  screen:'home',prev:null,curOA:null,curRel:null,
+  step:1,fd:{},degs:[],
+  gps:null,gwid:null,
+  stream:null,facing:'environment',flash:false,camOA:null,
+  annPh:null,annHist:[],annColor:'#FF3B30',annTool:'pen',annDrw:false,
+  viewId:null,
+  _pwa:null,_sw:null,
+};
+
+function now(){return new Date().toISOString();}
+
+// ══════════════════════════════════════════════════════════════
+// PWA — Service Worker & Install
+// ══════════════════════════════════════════════════════════════
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    G._sw=reg;
+    reg.addEventListener('updatefound',()=>{
+      const nw=reg.installing;
+      nw.addEventListener('statechange',()=>{
+        if(nw.state==='installed'&&navigator.serviceWorker.controller){
+          G._pendingWorker=nw;
+          document.getElementById('upd-banner').style.display='block';
+        }
+      });
+    });
+  }).catch(()=>{});
+}
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();G._pwa=e;
+  const b=document.getElementById('install-banner');
+  if(b)b.style.display='flex';
+});
+
+window.addEventListener('appinstalled',()=>{
+  const b=document.getElementById('install-banner');
+  if(b)b.style.display='none';
+  toast('Application installée ✓');
+});
+
+function doInstall(){
+  if(G._pwa){G._pwa.prompt();G._pwa.userChoice.then(r=>{if(r.outcome==='accepted')G._pwa=null;});}
+}
+
+function applyUpdate(){
+  if(G._pendingWorker)G._pendingWorker.postMessage('skipWaiting');
+  window.location.reload();
+}
+
+// Deeplink depuis manifest shortcuts
+const _params=new URLSearchParams(location.search);
+if(_params.get('action')==='new') window.addEventListener('load',()=>newReleve());
+if(_params.get('screen')==='liste') window.addEventListener('load',()=>nav('liste'));
+
+// ══════════════════════════════════════════════════════════════
+// GPS
+// ══════════════════════════════════════════════════════════════
+function startGPS(){
+  if(!navigator.geolocation){updGPS('e');return;}
+  G.gwid=navigator.geolocation.watchPosition(
+    p=>{G.gps={lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy),ts:Date.now()};updGPS('ok');},
+    ()=>updGPS('w'),
+    {enableHighAccuracy:true,maximumAge:5000,timeout:15000}
+  );
+  navigator.geolocation.getCurrentPosition(
+    p=>{G.gps={lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy),ts:Date.now()};updGPS('ok');},
+    ()=>updGPS('w'),{enableHighAccuracy:true,timeout:12000}
+  );
+}
+
+function updGPS(s){
+  const h=document.getElementById('gps-hdr');
+  const b=document.getElementById('gps-banner');
+  const ci=document.getElementById('cam-gps');
+  if(s==='ok'&&G.gps){
+    if(h){h.className='gps-pill';h.textContent='⊙ ±'+G.gps.acc+'m';}
+    if(ci)ci.textContent='⊙ GPS ±'+G.gps.acc+'m';
+    if(b)b.innerHTML='';
+  }else if(s==='w'){
+    if(h){h.className='gps-pill w';h.textContent='⊙ GPS…';}
+    if(b)b.innerHTML='<div style="background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.25);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--warn);margin-bottom:10px">⊙ Acquisition GPS — restez à l\'extérieur et autorisez la localisation</div>';
+  }else{
+    if(h){h.className='gps-pill e';h.textContent='⊙ GPS indispo';}
+    if(b)b.innerHTML='<div style="background:rgba(232,64,64,.1);border:1px solid rgba(232,64,64,.25);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--danger);margin-bottom:10px">GPS non disponible — activer la localisation dans les réglages</div>';
+  }
+}
+
+function getGPS(){if(G.gps&&(Date.now()-G.gps.ts)<30000)return{...G.gps};return null;}
+function fmtG(g){if(!g)return'Non géolocalisé';return g.lat.toFixed(5)+'°N, '+g.lng.toFixed(5)+'°E (±'+g.acc+'m)';}
+
+// ══════════════════════════════════════════════════════════════
+// Navigation
+// ══════════════════════════════════════════════════════════════
+function nav(n){
+  G.prev=G.screen;G.screen=n;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+n).classList.add('on');
+  if(n==='liste')renderList();
+  if(n==='home')renderHome();
+  if(n==='photos')renderPLib();
+  if(n==='param')renderParam();
+}
+function goBack(){nav(G.prev||'home');}
+function backForm(){if(Object.keys(G.fd).length>2&&!confirm('Abandonner la saisie ?'))return;nav('home');}
+
+// ══════════════════════════════════════════════════════════════
+// Home
+// ══════════════════════════════════════════════════════════════
+function renderHome(){
+  document.getElementById('oa-list').innerHTML=OAS.map(oa=>`
+    <div class="oa-row" onclick="openOA('${oa.id}')">
+      <span class="bdg ${bCls(oa.cotation)}" style="min-width:38px">${oa.cotation}</span>
+      <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${oa.nom}</div>
+        <div style="font-size:12px;color:var(--text2)">${oa.commune} · ${oa.pr}</div></div>
+      <span style="color:var(--text3);font-size:20px">›</span>
+    </div>`).join('');
+  refreshStats();
+}
+
+async function refreshStats(){
+  const s=await getStats();
+  el('st-insp').textContent=s.rels;
+  el('st-ph').textContent=s.phs;
+  const sb=document.getElementById('sync-banner-home');
+  if(sb&&s.pend>0)sb.innerHTML=`<div class="sync-banner w" onclick="doSync()"><span style="font-size:18px">⏳</span><div>${s.pend} élément(s) en attente de synchronisation</div></div>`;
+  else if(sb)sb.innerHTML='';
+}
+
+// ══════════════════════════════════════════════════════════════
+// OA Détail
+// ══════════════════════════════════════════════════════════════
+async function openOA(id){
+  G.curOA=OAS.find(o=>o.id===id);const oa=G.curOA;
+  el('oa-name').textContent=oa.nom;
+  el('oa-sub').textContent=oa.commune+' · '+oa.type;
+  const phs=await dbPhsByOA(id);
+  el('oa-body').innerHTML=`
+    <div class="sec">Caractéristiques</div>
+    <div class="card"><div class="g2" style="gap:10px">
+      ${ir('Année',oa.annee)}${ir('Matériaux',oa.materiaux)}
+      ${ir('Longueur',oa.longueur+' m')}${ir('Travées',oa.travees)}
+      ${ir('Portée',oa.portee?oa.portee+' m':'—')}${ir('Largeur',oa.largeur?oa.largeur+' m':'—')}
+      ${ir('Gestionnaire',oa.gestionnaire)}${ir('Franchissement',oa.franchissement)}
+    </div></div>
+    <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Photos terrain (${phs.length})</span>
+      <button class="btn-s" style="padding:7px 12px;font-size:13px;min-height:auto" onclick="openCam('${id}')">📷 Ajouter</button>
+    </div>
+    ${await pgrid(phs,id)}
+    <div class="div"></div>
+    <button class="btn-p" onclick="startInsp()">Nouvelle inspection</button>
+    <div style="height:16px"></div>`;
+  G.prev=G.screen;nav('oa');
+}
+
+function ir(l,v){return`<div><div style="font-size:11px;color:var(--text2)">${l}</div><div style="font-size:13px;font-weight:500;margin-top:2px">${v||'—'}</div></div>`}
+
+async function pgrid(phs,oaId){
+  if(!phs.length)return`<div class="padd" style="aspect-ratio:unset;padding:22px" onclick="openCam('${oaId}')"><span style="font-size:26px">📷</span><span>Prendre des photos</span></div>`;
+  return`<div class="pgrid">${phs.map(p=>`<div class="pth" onclick="viewPh('${p.id}')">
+    <img src="${p.data}" alt="" loading="lazy">
+    <div class="pdel" onclick="event.stopPropagation();delPh('${p.id}')">×</div>
+    <div class="pnum">${p.num}</div>
+    ${p.gps?'<div class="pgps">GPS</div>':''}
+    ${p.annotated?'<div class="pann">✏</div>':''}
+  </div>`).join('')}
+  <div class="padd" onclick="openCam('${oaId}')"><span style="font-size:20px">+</span><span>Photo</span></div></div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// Photos librairie
+// ══════════════════════════════════════════════════════════════
+async function renderPLib(){
+  const phs=await dbAllPhs();
+  const c=el('ph-lib');
+  if(!phs.length){c.innerHTML=`<div style="text-align:center;padding:52px 20px;color:var(--text3)"><div style="font-size:52px;margin-bottom:12px">📷</div><div style="font-size:15px;font-weight:500;color:var(--text2);margin-bottom:20px">Aucune photo</div><button class="btn-p" style="width:auto;padding:12px 28px" onclick="openCam(null)">Ouvrir la caméra</button></div>`;return;}
+  const byOA={};phs.forEach(p=>{const n=OAS.find(o=>o.id===p.oaId)?.nom||'Sans ouvrage';if(!byOA[n])byOA[n]=[];byOA[n].push(p);});
+  c.innerHTML=await Promise.all(Object.entries(byOA).map(async([name,photos])=>`
+    <div class="sec">${name} (${photos.length})</div>
+    <div class="pgrid">${photos.map(p=>`<div class="pth" onclick="viewPh('${p.id}')">
+      <img src="${p.data}" alt="" loading="lazy">
+      <div class="pdel" onclick="event.stopPropagation();delPh('${p.id}')">×</div>
+      <div class="pnum">${p.num}</div>
+      ${p.gps?'<div class="pgps">GPS</div>':''}
+      ${p.annotated?'<div class="pann">✏</div>':''}
+    </div>`).join('')}
+    <div class="padd" onclick="openCam('${photos[0]?.oaId||null}')"><span style="font-size:20px">+</span><span>Photo</span></div></div>`)).then(r=>r.join(''));
+}
+
+// ══════════════════════════════════════════════════════════════
+// Paramètres
+// ══════════════════════════════════════════════════════════════
+async function renderParam(){
+  const s=await getStats();
+  el('pr-rel').textContent=s.rels;el('pr-ph').textContent=s.phs;el('pr-sync').textContent=s.pend;
+  const apiEl=el('api-url');if(apiEl)apiEl.value=localStorage.getItem('oa_api_url')||'';
+}
+function saveApiUrl(v){localStorage.setItem('oa_api_url',v);}
+
+async function doSync(){
+  const apiUrl=localStorage.getItem('oa_api_url');
+  if(!apiUrl){toast('Aucune URL API configurée — vérifier les réglages');return;}
+  if(!navigator.onLine){toast('Pas de connexion réseau');return;}
+  const items=await dbPending();
+  if(!items.length){toast('Tout est synchronisé ✓');return;}
+  toast('Synchronisation en cours… ('+items.length+' éléments)');
+  let ok=0;
+  for(const item of items){
+    try{
+      const r=await fetch(apiUrl+'/'+(item.type==='releve'?'releves':'photos'),{
+        method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(localStorage.getItem('oa_token')||'')},
+        body:JSON.stringify(item.payload)
+      });
+      if(r.ok){await dbMarkDone(item.id);ok++;}
+    }catch(e){}
+  }
+  toast(ok+' élément(s) synchronisé(s) ✓');
+  refreshStats();
+}
+
+async function exportAll(){
+  const[rels,phs]=await Promise.all([dbAllRels(),dbAllPhs()]);
+  const blob=new Blob([JSON.stringify({releves:rels,photos:phs.map(p=>({...p,data:'[base64_omis]'})),exportedAt:now()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='InspectOA_export_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  toast('Export téléchargé ✓');
+}
+
+async function clearAll(){
+  if(!confirm('Effacer TOUTES les données ? Cette action est irréversible.'))return;
+  const[rels,phs]=await Promise.all([dbAllRels(),dbAllPhs()]);
+  await Promise.all([...rels.map(r=>dbDelRel(r.id)),...phs.map(p=>dbDelPh(p.id))]);
+  toast('Données effacées');renderParam();refreshStats();
+}
+
+// ══════════════════════════════════════════════════════════════
+// Caméra
+// ══════════════════════════════════════════════════════════════
+async function openCam(oaId){
+  G.camOA=oaId||G.curOA?.id||null;
+  el('cam-ov').classList.add('on');
+  await startStream();
+}
+async function startStream(){
+  if(G.stream){G.stream.getTracks().forEach(t=>t.stop());G.stream=null;}
+  try{
+    G.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:G.facing,width:{ideal:1920},height:{ideal:1080}},audio:false});
+    const v=el('cam-v');v.srcObject=G.stream;await v.play();
+    const g=getGPS();el('cam-gps').textContent=g?'⊙ GPS ±'+g.acc+'m':'⊙ GPS indisponible';
+  }catch(e){demoStream();}
+}
+function demoStream(){toast('Mode démo — caméra simulée');}
+
+function shoot(){
+  const v=el('cam-v');
+  if(!G.stream||!v.srcObject){demoShoot();return;}
+  const c=el('cam-c');c.width=v.videoWidth||1280;c.height=v.videoHeight||720;
+  c.getContext('2d').drawImage(v,0,0);
+  flashAndProcess(c.toDataURL('image/jpeg',.82));
+}
+function demoShoot(){
+  const c=el('cam-c');c.width=800;c.height=600;
+  const ctx=c.getContext('2d');ctx.fillStyle='#6e6e66';ctx.fillRect(0,0,800,600);
+  for(let i=0;i<300;i++){ctx.fillStyle=`rgba(${60+Math.random()*50},${60+Math.random()*50},${55+Math.random()*40},.35)`;ctx.fillRect(Math.random()*800,Math.random()*600,Math.random()*40+2,Math.random()*40+2);}
+  ctx.strokeStyle='#2a2a22';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(250,80);ctx.bezierCurveTo(260,160,280,240,295,340);ctx.bezierCurveTo(305,400,310,460,320,540);ctx.stroke();
+  ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,560,800,40);ctx.fillStyle='#fff';ctx.font='11px monospace';
+  const g=getGPS();ctx.fillText('InspectOA Demo · '+new Date().toLocaleString('fr-FR'),10,582);
+  if(g)ctx.fillText(g.lat.toFixed(5)+'°N '+g.lng.toFixed(5)+'°E',500,582);
+  flashAndProcess(c.toDataURL('image/jpeg',.85));
+}
+
+async function flashAndProcess(data){
+  const fx=el('cam-fx');fx.classList.add('on');setTimeout(()=>fx.classList.remove('on'),120);
+  closeCam();
+  const totalPhs=(await idbCount('photos'))+1;
+  const photo={id:'ph_'+Date.now(),data,oaId:G.camOA,annotated:false,gps:getGPS(),num:'#'+totalPhs,ts:now()};
+  G.annPh=photo;openAnn(photo);
+}
+async function flipCam(){G.facing=G.facing==='environment'?'user':'environment';await startStream();}
+function toggleFlash(){G.flash=!G.flash;el('fl-btn').style.color=G.flash?'#FFD60A':'#fff';const t=G.stream?.getVideoTracks()[0];if(t?.getCapabilities()?.torch)t.applyConstraints({advanced:[{torch:G.flash}]});}
+function setMode(m){
+  ['n','g','m'].forEach(x=>{const b=el('cm-'+x);if(!b)return;b.style.background=x===m?'rgba(46,127,232,.5)':'rgba(255,255,255,.1)';b.style.borderColor=x===m?'var(--accent)':'rgba(255,255,255,.2)';});
+  el('grid-ov').style.display=m==='g'?'block':'none';
+  if(m==='m')toast('Mode macro — approchez à 5–10 cm');
+}
+function closeCam(){if(G.stream){G.stream.getTracks().forEach(t=>t.stop());G.stream=null;}el('cam-ov').classList.remove('on');}
+function fromGallery(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>flashAndProcess(ev.target.result);r.readAsDataURL(f);e.target.value='';}
+
+// ══════════════════════════════════════════════════════════════
+// Annotation
+// ══════════════════════════════════════════════════════════════
+let aCtx=null;
+function openAnn(photo){
+  G.annPh=photo;G.annHist=[];
+  el('ann-ov').classList.add('on');
+  const canvas=el('ann-c');aCtx=canvas.getContext('2d');
+  const img=new Image();
+  img.onload=()=>{
+    const mW=window.innerWidth,mH=window.innerHeight-140;
+    const sc=Math.min(mW/img.width,mH/img.height,1);
+    canvas.width=img.width*sc;canvas.height=img.height*sc;
+    aCtx.drawImage(img,0,0,canvas.width,canvas.height);
+    setupAE();
+  };img.src=photo.data;
+}
+function setupAE(){
+  const c=el('ann-c');const nc=c.cloneNode(false);c.parentNode.replaceChild(nc,c);
+  const canvas=el('ann-c');aCtx=canvas.getContext('2d');
+  let sX,sY,snap;
+  function pt(e){const r=canvas.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}
+  function start(e){
+    const p=pt(e);sX=p.x;sY=p.y;G.annDrw=true;
+    if(G.annTool==='pen'||G.annTool==='erase'){aCtx.beginPath();aCtx.moveTo(p.x,p.y);}
+    if(G.annTool==='text'){const txt=prompt('Texte :');if(txt){saveAH();aCtx.font='bold 18px -apple-system,sans-serif';aCtx.fillStyle=G.annColor;aCtx.strokeStyle='rgba(0,0,0,.5)';aCtx.lineWidth=2;aCtx.strokeText(txt,p.x,p.y);aCtx.fillText(txt,p.x,p.y);}G.annDrw=false;return;}
+    if(G.annTool==='arrow'||G.annTool==='rect')snap=aCtx.getImageData(0,0,canvas.width,canvas.height);
+  }
+  function move(e){
+    if(!G.annDrw)return;const p=pt(e);
+    if(G.annTool==='pen'){aCtx.lineTo(p.x,p.y);aCtx.strokeStyle=G.annColor;aCtx.lineWidth=4;aCtx.lineCap='round';aCtx.lineJoin='round';aCtx.stroke();}
+    else if(G.annTool==='erase'){aCtx.lineTo(p.x,p.y);aCtx.globalCompositeOperation='destination-out';aCtx.strokeStyle='rgba(0,0,0,1)';aCtx.lineWidth=24;aCtx.lineCap='round';aCtx.stroke();aCtx.globalCompositeOperation='source-over';}
+    else if(G.annTool==='arrow'){if(snap)aCtx.putImageData(snap,0,0);aCtx.strokeStyle=G.annColor;aCtx.lineWidth=3;dArrow(sX,sY,p.x,p.y);}
+    else if(G.annTool==='rect'){if(snap)aCtx.putImageData(snap,0,0);aCtx.strokeStyle=G.annColor;aCtx.lineWidth=3;aCtx.strokeRect(sX,sY,p.x-sX,p.y-sY);}
+  }
+  function end(){if(G.annDrw){saveAH();G.annDrw=false;}}
+  canvas.addEventListener('mousedown',start,{passive:false});canvas.addEventListener('touchstart',start,{passive:false});
+  canvas.addEventListener('mousemove',move,{passive:true});canvas.addEventListener('touchmove',move,{passive:true});
+  canvas.addEventListener('mouseup',end);canvas.addEventListener('touchend',end);
+}
+function dArrow(x1,y1,x2,y2){const h=16,a=Math.atan2(y2-y1,x2-x1);aCtx.beginPath();aCtx.moveTo(x1,y1);aCtx.lineTo(x2,y2);aCtx.stroke();aCtx.beginPath();aCtx.moveTo(x2,y2);aCtx.lineTo(x2-h*Math.cos(a-Math.PI/7),y2-h*Math.sin(a-Math.PI/7));aCtx.lineTo(x2-h*Math.cos(a+Math.PI/7),y2-h*Math.sin(a+Math.PI/7));aCtx.closePath();aCtx.fillStyle=G.annColor;aCtx.fill();}
+function saveAH(){const c=el('ann-c');G.annHist.push(aCtx.getImageData(0,0,c.width,c.height));if(G.annHist.length>12)G.annHist.shift();}
+function undoAnn(){if(!G.annHist.length){toast('Rien à annuler');return;}const c=el('ann-c');aCtx.putImageData(G.annHist.pop(),0,0);}
+function setAC(e){document.querySelectorAll('.ac').forEach(x=>x.classList.remove('on'));e.classList.add('on');G.annColor=e.dataset.c;}
+function setAT(e){document.querySelectorAll('.at').forEach(x=>x.classList.remove('on'));e.classList.add('on');G.annTool=e.dataset.t;}
+function cancelAnn(){el('ann-ov').classList.remove('on');G.annPh=null;}
+async function saveAnn(){
+  const c=el('ann-c');
+  const photo={...G.annPh,data:c.toDataURL('image/jpeg',.85),annotated:true};
+  await dbSavePh(photo);
+  await dbEnqueue({type:'photo',payload:{id:photo.id,oaId:photo.oaId,gps:photo.gps,ts:photo.ts,annotated:true}});
+  el('ann-ov').classList.remove('on');toast('Photo sauvegardée ✓');
+  if(G.screen==='oa'&&G.curOA)openOA(G.curOA.id);
+  if(G.screen==='photos')renderPLib();
+  if(G.screen==='form')renderStep();
+  refreshStats();
+}
+
+// ══════════════════════════════════════════════════════════════
+// Viewer
+// ══════════════════════════════════════════════════════════════
+async function viewPh(id){
+  G.viewId=id;const p=await dbGetPh(id);if(!p)return;
+  el('view-img').src=p.data;
+  el('view-info').textContent=(p.gps?fmtG(p.gps):'Non géolocalisée')+' · '+new Date(p.ts).toLocaleString('fr-FR');
+  el('view-ov').classList.add('on');
+}
+function closeView(){el('view-ov').classList.remove('on');G.viewId=null;}
+async function annCurr(){const p=await dbGetPh(G.viewId);if(!p)return;closeView();openAnn(p);}
+async function dlCurr(){const p=await dbGetPh(G.viewId);if(!p)return;const a=document.createElement('a');a.href=p.data;a.download='InspectOA_'+p.num+'.jpg';a.click();toast('Photo téléchargée');}
+async function delPh(id){if(!confirm('Supprimer ?'))return;await dbDelPh(id);closeView();if(G.screen==='oa'&&G.curOA)openOA(G.curOA.id);if(G.screen==='photos')renderPLib();if(G.screen==='form')renderStep();toast('Photo supprimée');refreshStats();}
+function delCurr(){delPh(G.viewId);}
+
+// ══════════════════════════════════════════════════════════════
+// Formulaire
+// ══════════════════════════════════════════════════════════════
+function newReleve(){
+  G.step=1;
+  G.fd={id:'rel_'+Date.now(),oaId:G.curOA?.id||OAS[0].id,oaNom:G.curOA?.nom||OAS[0].nom,date:new Date().toLocaleDateString('fr-FR'),dateISO:new Date().toISOString().slice(0,10),heure:'08:00',inspecteur:'S. Kaptue',status:'draft',gps:getGPS()};
+  G.degs=[];if(!G.curOA)G.curOA=OAS[0];
+  el('fm-oa').textContent=G.fd.oaNom;
+  renderStep();G.prev=G.screen;nav('form');
+}
+function startInsp(){newReleve();}
+
+function renderStep(){
+  const n=G.step;
+  el('fm-step').textContent=`Étape ${n} / 4`;
+  el('fm-bar').style.width=(n*25)+'%';
+  const steps=[s1,s2,s3,s4];
+  el('fm-body').innerHTML=steps[n-1]();
+  el('fm-body').scrollTop=0;
+  attachFL();
+}
+
+function s1(){
+  const g=getGPS();
+  return`<div class="sec">Identification</div>
+  <div class="frow"><label class="flbl">Ouvrage</label>
+    <select id="f-oa">${OAS.map(o=>`<option value="${o.id}"${o.id===G.fd.oaId?' selected':''}>${o.nom}</option>`).join('')}</select></div>
+  <div class="g2">
+    <div class="frow"><label class="flbl">Date</label><input type="date" id="f-dt" value="${G.fd.dateISO}"></div>
+    <div class="frow"><label class="flbl">Heure</label><input type="time" id="f-hr" value="${G.fd.heure}"></div>
+  </div>
+  <div class="sec">Géolocalisation</div>
+  <div class="card" style="padding:12px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <div style="flex:1">
+      <div class="gps-pill ${g?'':'w'}" style="margin-bottom:6px">${g?'⊙ GPS ±'+g.acc+'m':'⊙ GPS en attente'}</div>
+      <div style="font-size:12px;color:var(--text2)" id="gps-fm-txt">${g?fmtG(g):'Localisation non disponible'}</div>
+    </div>
+    <button class="btn-s" style="padding:8px 12px;font-size:13px;min-height:auto" onclick="rfGPS()">↻ GPS</button>
+  </div></div>
+  <div class="sec">Type de visite</div>
+  <div class="chk-grp" id="tv-grp">${['Initiale','Détaillée','Approfondie','Surveillance'].map(t=>`<div class="chk-item"><input type="checkbox" id="tv-${t}"${G.fd.typeVisite===t?' checked':''}><label for="tv-${t}">${t}</label></div>`).join('')}</div>
+  <div class="sec">Météo</div>
+  <div class="chk-grp" id="mt-grp">${['☀ Soleil','☁ Nuageux','🌧 Pluie','🌫 Brume'].map(m=>`<div class="chk-item"><input type="checkbox" id="mt-${m}"${G.fd.meteo===m?' checked':''}><label for="mt-${m}">${m}</label></div>`).join('')}</div>
+  <div class="sec">Accès</div>
+  <div class="chk-grp" id="ac-grp">${['Visuel','Nacelle','Passerelle','Corde'].map(a=>`<div class="chk-item"><input type="checkbox" id="ac-${a}"${G.fd.acces===a?' checked':''}><label for="ac-${a}">${a}</label></div>`).join('')}</div>
+  <div class="div"></div>
+  <button class="btn-p" onclick="nxStep()">Continuer →</button><div style="height:16px"></div>`;
+}
+
+function rfGPS(){
+  navigator.geolocation?.getCurrentPosition(p=>{
+    G.gps={lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy),ts:Date.now()};
+    G.fd.gps=G.gps;updGPS('ok');
+    const e2=el('gps-fm-txt');if(e2)e2.textContent=fmtG(G.gps);toast('GPS actualisé ✓');
+  },()=>toast('GPS indisponible'),{enableHighAccuracy:true,timeout:10000});
+}
+
+async function s2(){
+  const fams=[...new Set(ELEMS.map(e=>e.fam))];
+  const phs=await dbPhsByOA(G.fd.oaId);
+  return`<div class="sec">Relevé par élément</div>
+  ${fams.map(fam=>`
+    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin:10px 0 5px;letter-spacing:.06em">${fam}</div>
+    ${ELEMS.filter(e=>e.fam===fam).map(e2=>`
+      <div class="card" style="cursor:pointer;padding:12px 14px;margin-bottom:6px" onclick="addDeg('${e2.id}','${e2.lib.replace(/'/g,"\\'")}')">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="color:var(--text3);font-size:20px">+</span>
+          <div style="flex:1;font-size:14px">${e2.lib}</div>
+          ${G.degs.filter(d=>d.eId===e2.id).length?`<span style="font-size:12px;color:var(--ok)">✓ ${G.degs.filter(d=>d.eId===e2.id).length}</span>`:''}
+        </div></div>`).join('')}`).join('')}
+  <div class="sec">Dégradations (${G.degs.length})</div>
+  ${G.degs.map((d,i)=>`<div class="deg-row">
+    <span class="bdg ${bCls(d.iq)}" style="min-width:34px;flex-shrink:0">${d.iq}</span>
+    <div style="flex:1"><div style="font-size:13px;font-weight:500">${d.elem}</div>
+      <div style="font-size:11px;color:var(--text2)">${d.loc||'—'} · Grav.${d.gv}/3</div>
+      ${d.gps?`<div style="font-size:10px;color:var(--ok);margin-top:2px">⊙ ${d.gps.lat.toFixed(4)}°N ${d.gps.lng.toFixed(4)}°E</div>`:''}
+    </div>
+    <button onclick="G.degs.splice(${i},1);renderStep()" style="color:var(--text3);font-size:22px;min-width:38px;min-height:38px">×</button>
+  </div>`).join('')||'<div style="font-size:13px;color:var(--text3);padding:6px 0">Aucune dégradation</div>'}
+  <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
+    <span>Photos (${phs.length})</span>
+    <button class="btn-s" style="padding:7px 12px;font-size:13px;min-height:auto" onclick="openCam('${G.fd.oaId}')">📷</button>
+  </div>
+  ${await pgrid(phs,G.fd.oaId)}
+  <div class="div"></div>
+  <div class="g2" style="gap:8px"><button class="btn-s" onclick="pvStep()">← Retour</button><button class="btn-p" onclick="nxStep()">Continuer →</button></div>
+  <div style="height:16px"></div>`;
+}
+
+function s3(){
+  return`<div class="sec">Cotation globale IQOA</div>
+  <div class="iq-grp">${IQS.map(c=>`<div class="iq-btn ${G.fd.cot===c?'s'+c.toLowerCase():''}" onclick="selIQ('${c}')" id="iq-${c}">${c}</div>`).join('')}</div>
+  <div style="font-size:12px;color:var(--text2);margin:10px 0 18px" id="iq-desc">${G.fd.cot?iqDesc(G.fd.cot):'Sélectionner une classe'}</div>
+  <div class="sec">Conclusion & recommandations</div>
+  <textarea id="f-conc" placeholder="État général, désordres principaux, suites à donner…" style="min-height:110px">${G.fd.conclusion||''}</textarea>
+  <div class="frow" style="margin-top:12px"><label class="flbl">Travaux estimés (€)</label>
+    <input type="text" id="f-trav" inputmode="numeric" placeholder="ex. 250 000" value="${G.fd.travaux||''}"></div>
+  <div class="frow"><label class="flbl">Prochaine inspection</label>
+    <input type="text" id="f-proch" placeholder="ex. Septembre 2027" value="${G.fd.prochaine||''}"></div>
+  <div class="div"></div>
+  <div class="g2" style="gap:8px"><button class="btn-s" onclick="pvStep()">← Retour</button><button class="btn-p" onclick="nxStep()">Continuer →</button></div>
+  <div style="height:16px"></div>`;
+}
+
+async function s4(){
+  const phs=await dbPhsByOA(G.fd.oaId);
+  return`<div class="sec">Récapitulatif</div>
+  <div class="card">
+    ${ir('Ouvrage',G.fd.oaNom)}<div style="height:8px"></div>
+    ${ir('Date',G.fd.date+(G.fd.heure?' à '+G.fd.heure:''))}<div style="height:8px"></div>
+    ${ir('Type',G.fd.typeVisite||'—')}<div style="height:8px"></div>
+    ${ir('Météo',G.fd.meteo||'—')}<div style="height:8px"></div>
+    ${ir('Position GPS',fmtG(G.fd.gps))}
+  </div>
+  <div class="card" style="display:flex;align-items:center;gap:12px">
+    ${G.fd.cot?`<span class="bdg ${bCls(G.fd.cot)}" style="font-size:20px;padding:7px 14px">${G.fd.cot}</span>
+    <div><div style="font-weight:500;font-size:15px">${iqLabel(G.fd.cot)}</div>
+    <div style="font-size:12px;color:var(--text2)">${G.degs.length} dégradation(s) · ${phs.length} photo(s)</div></div>`
+    :`<span style="font-size:13px;color:var(--warn)">⚠ Cotation non renseignée</span>`}
+  </div>
+  ${phs.length?`<div class="sec">Photos (${phs.length})</div>${await pgrid(phs,G.fd.oaId)}`:''}
+  <div class="div"></div>
+  <div class="g2" style="gap:8px;margin-bottom:10px">
+    <button class="btn-s" onclick="pvStep()">← Retour</button>
+    <button class="btn-p" onclick="finalizeRel()" ${!G.fd.cot?'disabled':''}>Finaliser ✓</button>
+  </div>
+  <button class="btn-s" style="width:100%" onclick="saveDraft()">Enregistrer brouillon</button>
+  <div style="height:16px"></div>`;
+}
+
+function attachFL(){
+  if(G.step===1){
+    el('f-oa')?.addEventListener('change',e=>{const oa=OAS.find(o=>o.id===e.target.value);G.fd.oaId=e.target.value;G.fd.oaNom=oa.nom;G.curOA=oa;el('fm-oa').textContent=oa.nom;});
+    el('f-dt')?.addEventListener('change',e=>{G.fd.dateISO=e.target.value;G.fd.date=new Date(e.target.value+'T12:00:00').toLocaleDateString('fr-FR');});
+    el('f-hr')?.addEventListener('change',e=>G.fd.heure=e.target.value);
+    sc('tv-grp','tv-','typeVisite');sc('mt-grp','mt-','meteo');sc('ac-grp','ac-','acces');
+  }
+  if(G.step===3){
+    el('f-conc')?.addEventListener('input',e=>G.fd.conclusion=e.target.value);
+    el('f-trav')?.addEventListener('change',e=>G.fd.travaux=e.target.value);
+    el('f-proch')?.addEventListener('change',e=>G.fd.prochaine=e.target.value);
+  }
+}
+function sc(gId,px,field){document.querySelectorAll('#'+gId+' input').forEach(cb=>cb.addEventListener('change',()=>{document.querySelectorAll('#'+gId+' input').forEach(c=>{if(c!==cb)c.checked=false;});if(cb.checked)G.fd[field]=cb.id.replace(px,'');}));}
+function nxStep(){if(G.step<4){G.step++;renderStep();}}
+function pvStep(){if(G.step>1){G.step--;renderStep();}}
+function selIQ(c){G.fd.cot=c;IQS.forEach(x=>{const b=el('iq-'+x);if(b)b.className='iq-btn'+(x===c?' s'+x.toLowerCase():'');});const d=el('iq-desc');if(d)d.textContent=iqDesc(c);}
+
+function addDeg(eId,eLib){
+  const d={id:'dg_'+Date.now(),eId,elem:eLib,loc:'',iq:'',gv:1,urg:'Long terme',obs:'',pIds:[],gps:getGPS()};
+  dbPhsByOA(G.fd.oaId).then(phs=>{
+    const html=`<div style="padding:16px">
+      <div style="font-weight:600;font-size:15px;margin-bottom:12px">${eLib}</div>
+      ${d.gps?`<div class="gps-pill" style="margin-bottom:12px;font-size:11px">⊙ ${d.gps.lat.toFixed(4)}°N ${d.gps.lng.toFixed(4)}°E ±${d.gps.acc}m</div>`:'<div class="gps-pill w" style="margin-bottom:12px;font-size:11px">⊙ GPS indisponible</div>'}
+      <div class="frow"><label class="flbl">Localisation</label><input type="text" id="dg-loc" placeholder="ex. Travée 2, rive gauche"></div>
+      <div class="frow"><label class="flbl">Classe IQOA</label>
+        <div class="iq-grp">${IQS.map(c=>`<div class="iq-btn" onclick="sdIQ('${c}')" id="diq-${c}">${c}</div>`).join('')}</div></div>
+      <div class="frow"><label class="flbl">Gravité</label>
+        <div style="display:flex;gap:6px">${[1,2,3].map(g=>`<button class="ugb${g===1?' on':''}" id="gv-${g}" onclick="sdGv(${g})">${g} — ${['Faible','Modérée','Sévère'][g-1]}</button>`).join('')}</div></div>
+      <div class="frow"><label class="flbl">Urgence</label>
+        <select id="dg-urg">${['Immédiate','< 1 an','< 5 ans','Long terme'].map(u=>`<option>${u}</option>`).join('')}</select></div>
+      <div class="frow"><label class="flbl">Observations</label>
+        <textarea id="dg-obs" placeholder="Description, dimensions, évolution estimée…"></textarea></div>
+      ${phs.length?`<div class="frow"><label class="flbl">Photos associées</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+          ${phs.map(p=>`<div id="psl-${p.id}" style="width:62px;height:46px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;position:relative" onclick="tgPS('${p.id}')">
+            <img src="${p.data}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+            <div id="pov-${p.id}" style="position:absolute;inset:0;background:rgba(46,127,232,0);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;opacity:0;transition:all .15s"></div>
+          </div>`).join('')}
+        </div></div>`:''}
+      <div class="g2" style="gap:8px;margin-top:16px">
+        <button class="btn-s" onclick="closeDgForm()">Annuler</button>
+        <button class="btn-p" onclick="confirmDg()">Ajouter</button>
+      </div></div>`;
+    const ov=document.createElement('div');ov.id='dg-ov';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:50;display:flex;align-items:flex-end;justify-content:center';
+    const pn=document.createElement('div');pn.style.cssText='background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-width:430px;max-height:90vh;overflow-y:auto;padding-bottom:var(--sab)';
+    pn.innerHTML=html;ov.appendChild(pn);document.body.appendChild(ov);
+    window._pd=d;window._ps=[];
+  });
+}
+function sdIQ(c){IQS.forEach(x=>{const b=el('diq-'+x);if(b)b.className='iq-btn'+(x===c?' s'+x.toLowerCase():'');});window._pd.iq=c;}
+function sdGv(g){[1,2,3].forEach(i=>{const b=el('gv-'+i);if(b)b.className='ugb'+(i===g?' on':'');});window._pd.gv=g;}
+function tgPS(id){const idx=window._ps.indexOf(id);const box=el('psl-'+id);const ov=el('pov-'+id);if(idx>=0){window._ps.splice(idx,1);box.style.borderColor='transparent';if(ov){ov.style.background='rgba(46,127,232,0)';ov.style.opacity='0';ov.textContent='';}}else{window._ps.push(id);box.style.borderColor='var(--accent)';if(ov){ov.style.background='rgba(46,127,232,.55)';ov.style.opacity='1';ov.textContent='✓';}}}
+function confirmDg(){
+  const d=window._pd;d.loc=el('dg-loc')?.value||'';d.urg=el('dg-urg')?.value||'Long terme';d.obs=el('dg-obs')?.value||'';d.pIds=window._ps||[];
+  if(!d.iq){toast('Sélectionner une classe IQOA');return;}
+  G.degs.push(d);closeDgForm();renderStep();toast('Dégradation ajoutée ✓');
+}
+function closeDgForm(){el('dg-ov')?.remove();}
+
+async function saveDraft(){
+  const r=bRel('draft');await dbSaveRel(r);await dbEnqueue({type:'releve',payload:r});
+  toast('Brouillon sauvegardé ✓');nav('liste');refreshStats();
+}
+async function finalizeRel(){
+  const r=bRel('final');await dbSaveRel(r);await dbEnqueue({type:'releve',payload:r});
+  G.curRel=r;await renderReleve(r);G.prev=G.screen;nav('releve');
+  toast('Inspection finalisée ✓');refreshStats();
+}
+function bRel(status){return{...G.fd,status,nbDeg:G.degs.length,degs:[...G.degs],cotation:G.fd.cot||'—',savedAt:now()};}
+
+// ══════════════════════════════════════════════════════════════
+// Liste relevés
+// ══════════════════════════════════════════════════════════════
+async function renderList(){
+  const rels=await dbAllRels();const c=el('rel-list');
+  if(!rels.length){c.innerHTML=`<div style="text-align:center;padding:52px 20px;color:var(--text3)"><div style="font-size:44px;margin-bottom:10px">📋</div><div style="font-size:15px;font-weight:500;color:var(--text2);margin-bottom:20px">Aucun relevé</div><button class="btn-p" style="width:auto;padding:12px 28px" onclick="newReleve()">+ Nouveau relevé</button></div>`;return;}
+  const counts={};await Promise.all(rels.map(async r=>{const phs=await dbPhsByOA(r.oaId);counts[r.id]=phs.length;}));
+  c.innerHTML=rels.map(r=>`<div class="card" style="cursor:pointer;margin-bottom:8px" onclick="openReleve('${r.id}')">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="bdg ${bCls(r.cotation)}">${r.cotation}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.oaNom}</div>
+        <div style="font-size:11px;color:var(--text2)">${r.date} · ${r.typeVisite||'Visite'} · ${r.nbDeg} dég. · ${counts[r.id]||0} photo(s)</div>
+      </div>
+      <div style="font-size:12px;color:${r.status==='draft'?'var(--warn)':'var(--ok)'};flex-shrink:0">${r.status==='draft'?'⏳':'✓'}</div>
+    </div></div>`).join('');
+}
+
+async function openReleve(id){
+  const r=await dbGetRel(id);if(!r)return;
+  G.curRel=r;await renderReleve(r);G.prev=G.screen;nav('releve');
+}
+
+async function renderReleve(r){
+  const oa=OAS.find(o=>o.id===r.oaId)||{};
+  const phs=await dbPhsByOA(r.oaId);
+  el('rv-title').textContent=r.oaNom;
+  el('rv-sub').textContent=r.date+(r.typeVisite?' · '+r.typeVisite:'');
+  const b=el('rv-bdg');b.textContent=r.cotation;b.className='bdg '+bCls(r.cotation);
+  el('rv-body').innerHTML=`
+    <div class="sec">Informations</div>
+    <div class="card">${ir('Ouvrage',r.oaNom)}<div style="height:8px"></div>${ir('Date',r.date+(r.heure?' à '+r.heure:''))}<div style="height:8px"></div>${ir('Inspecteur',r.inspecteur)}<div style="height:8px"></div>${ir('Type',r.typeVisite||'—')}<div style="height:8px"></div>${ir('Météo',r.meteo||'—')}<div style="height:8px"></div>${ir('Position GPS',fmtG(r.gps))}</div>
+    <div class="card" style="display:flex;align-items:center;gap:12px">
+      <span class="bdg ${bCls(r.cotation)}" style="font-size:20px;padding:7px 14px">${r.cotation}</span>
+      <div><div style="font-weight:500;font-size:15px">${iqLabel(r.cotation)}</div><div style="font-size:12px;color:var(--text2)">${r.nbDeg} dégradation(s)</div></div>
+    </div>
+    ${r.conclusion?`<div class="sec">Conclusion</div><div class="card"><div style="font-size:13px;line-height:1.7;color:var(--text2)">${r.conclusion}</div></div>`:''}
+    <div class="sec">Dégradations (${r.nbDeg})</div>
+    ${(r.degs||[]).map(d=>`<div class="deg-row">
+      <span class="bdg ${bCls(d.iq)}" style="min-width:34px;flex-shrink:0">${d.iq}</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${d.elem}</div>
+        <div style="font-size:11px;color:var(--text2)">${d.loc||'—'} · Grav.${d.gv}/3 · ${d.urg}</div>
+        ${d.gps?`<div style="font-size:10px;color:var(--ok);margin-top:2px">⊙ ${d.gps.lat.toFixed(5)}°N, ${d.gps.lng.toFixed(5)}°E</div>`:''}
+        ${d.obs?`<div style="font-size:11px;color:var(--text2);margin-top:3px">${d.obs}</div>`:''}
+      </div></div>`).join('')||'<div style="font-size:13px;color:var(--text3)">Aucune dégradation</div>'}
+    <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Photos terrain (${phs.length})</span>
+      <button class="btn-s" style="padding:7px 12px;font-size:13px;min-height:auto" onclick="openCam('${r.oaId}')">📷</button>
+    </div>
+    ${await pgrid(phs,r.oaId)}
+    <div class="div"></div>
+    <button class="btn-p" onclick="generatePDF('${r.id}')" style="margin-bottom:10px">📄 Générer le rapport PDF</button>
+    <div class="g2" style="gap:8px;margin-bottom:8px">
+      ${r.status==='draft'?`<button class="btn-s" style="flex:1" onclick="resumeRel('${r.id}')">Reprendre →</button>`:'<div></div>'}
+      <button class="btn-d" style="flex:1" onclick="delRel('${r.id}')">Supprimer</button>
+    </div><div style="height:16px"></div>`;
+}
+
+async function resumeRel(id){
+  const r=await dbGetRel(id);if(!r)return;
+  G.fd={...r};G.degs=[...(r.degs||[])];G.curOA=OAS.find(o=>o.id===r.oaId)||OAS[0];
+  G.step=1;el('fm-oa').textContent=r.oaNom;renderStep();G.prev=G.screen;nav('form');
+}
+
+async function delRel(id){
+  if(!confirm('Supprimer ce relevé ?'))return;
+  await dbDelRel(id);toast('Relevé supprimé');goBack();refreshStats();
+}
+
+// ══════════════════════════════════════════════════════════════
+// Génération PDF (identique v3, optimisée)
+// ══════════════════════════════════════════════════════════════
+async function generatePDF(relId){
+  const{jsPDF}=window.jspdf;
+  const r=await dbGetRel(relId);if(!r){toast('Relevé introuvable');return;}
+  const oa=OAS.find(o=>o.id===r.oaId)||{};
+  const oaPhs=await dbPhsByOA(r.oaId);const phs=oaPhs.slice(0,6);
+  pp(0,'Initialisation…');await tk(60);
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,M=15,CW=W-2*M;
+  const BL=[27,58,107],BL2=[46,95,171],LG=[245,245,245],DG=[68,68,68],WH=[255,255,255];
+  const IC={'1':[40,199,111],'2':[46,127,232],'2E':[232,160,32],'3':[232,112,32],'3U':[232,64,64],'—':[100,100,100]};
+  const ic=IC[r.cotation]||[100,100,100];
+  pp(8,'Couverture…');await tk(30);
+  // P1 : couverture
+  doc.setFillColor(...BL);doc.rect(0,0,W,38,'F');
+  doc.setTextColor(...WH);doc.setFontSize(18);doc.setFont('helvetica','bold');doc.text('RAPPORT D\'INSPECTION',M,14);
+  doc.setFontSize(11);doc.setFont('helvetica','normal');doc.text('Ouvrage d\'Art — Méthode IQOA / CEREMA',M,21);
+  doc.setFontSize(9);doc.text(r.inspecteur+' · Ingénieur OA · COPREC N2',M,28);
+  doc.setFontSize(9);doc.text('N° RPT-'+r.id.slice(-6).toUpperCase(),W-M,14,{align:'right'});doc.text(r.date,W-M,21,{align:'right'});
+  doc.setFillColor(...LG);doc.rect(M,44,CW,22,'F');
+  doc.setTextColor(...BL);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text(r.oaNom,M+4,53);
+  doc.setTextColor(...DG);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text((oa.commune||'')+(oa.pr?' · '+oa.pr:'')+(r.typeVisite?' · '+r.typeVisite:''),M+4,61);
+  doc.setFillColor(...ic);doc.roundedRect(M,72,38,18,3,3,'F');
+  doc.setTextColor(...WH);doc.setFontSize(18);doc.setFont('helvetica','bold');doc.text(r.cotation,M+19,83,{align:'center'});
+  doc.setTextColor(...DG);doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text(iqLabel(r.cotation),M+44,78);doc.text((r.nbDeg||0)+' dégradation(s) relevée(s) · '+phs.length+' photo(s)',M+44,84);
+  if(r.cotation==='3U'){doc.setFillColor(255,235,235);doc.rect(M,96,CW,14,'F');doc.setDrawColor(232,64,64);doc.rect(M,96,CW,14,'S');doc.setTextColor(163,45,45);doc.setFontSize(10);doc.setFont('helvetica','bold');doc.text('⚠  INTERVENTION URGENTE REQUISE',M+3,101);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Désordres graves — restriction de circulation à envisager immédiatement',M+3,108);}
+  let y=118;
+  function sh(t,yy){doc.setFillColor(...BL2);doc.rect(M,yy,CW,7,'F');doc.setTextColor(...WH);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(t,M+2,yy+5);return yy+10;}
+  y=sh('IDENTIFICATION DE L\'OUVRAGE',y);
+  const mid=M+CW/2;
+  const fs=[['Identifiant',oa.id||'—'],['Type',oa.type||'—'],['Gestionnaire',oa.gestionnaire||'—'],['Matériaux',oa.materiaux||'—'],['Année',oa.annee||'—'],['Classe charge',oa.classe_charge||'—'],['Longueur',(oa.longueur||'—')+' m'],['Franchissement',oa.franchissement||'—']];
+  for(let i=0;i<fs.length;i+=2){const[l1,v1]=fs[i];const[l2,v2]=fs[i+1]||['',''];const hw=CW/2/2.2;doc.setFillColor(...LG);doc.rect(M,y,hw,6,'F');doc.setTextColor(100,100,100);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(l1,M+1,y+4);doc.setTextColor(...DG);doc.setFont('helvetica','bold');doc.text(String(v1),M+hw+1,y+4);if(l2){doc.setFillColor(...LG);doc.rect(mid,y,hw,6,'F');doc.setTextColor(100,100,100);doc.setFont('helvetica','normal');doc.text(l2,mid+1,y+4);doc.setTextColor(...DG);doc.setFont('helvetica','bold');doc.text(String(v2),mid+hw+1,y+4);}y+=7;}
+  y+=3;y=sh('CONDITIONS DE VISITE',y);
+  const cf=[['Date',r.date],['Heure',r.heure||'—'],['Type',r.typeVisite||'—'],['Météo',r.meteo||'—'],['Accès',r.acces||'—'],['Habilitation','COPREC N2']];
+  for(let i=0;i<cf.length;i+=2){const[l1,v1]=cf[i];const[l2,v2]=cf[i+1]||['',''];const hw=CW/2/2.2;doc.setFillColor(...LG);doc.rect(M,y,hw,6,'F');doc.setTextColor(100,100,100);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.text(l1,M+1,y+4);doc.setTextColor(...DG);doc.setFont('helvetica','bold');doc.text(String(v1),M+hw+1,y+4);if(l2){doc.setFillColor(...LG);doc.rect(mid,y,hw,6,'F');doc.setTextColor(100,100,100);doc.setFont('helvetica','normal');doc.text(l2,mid+1,y+4);doc.setTextColor(...DG);doc.setFont('helvetica','bold');doc.text(String(v2),mid+hw+1,y+4);}y+=7;}
+  if(r.gps){y+=2;doc.setFillColor(235,248,235);doc.rect(M,y,CW,8,'F');doc.setDrawColor(40,199,111);doc.rect(M,y,CW,8,'S');doc.setTextColor(15,110,86);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('⊙  GPS : '+fmtG(r.gps),M+2,y+5);y+=11;}
+  ft(doc,1,W);
+  // P2 : dégradations
+  pp(30,'Dégradations…');await tk(30);
+  doc.addPage();y=20;
+  doc.setFillColor(...BL);doc.rect(0,0,W,12,'F');doc.setTextColor(...WH);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(r.oaNom+' — Relevé',M,8);doc.text(r.date,W-M,8,{align:'right'});
+  y=18;y=sh('RELEVÉ DES DÉGRADATIONS',y);
+  const cols=[62,22,22,22,22,30],colX=[M,M+62,M+84,M+106,M+128,M+150];
+  ['Élément','Localisation','Classe','Gravité','Urgence','Observations'].forEach((h,i)=>{doc.setFillColor(...BL);doc.rect(colX[i],y,cols[i],7,'F');doc.setTextColor(...WH);doc.setFontSize(7);doc.setFont('helvetica','bold');doc.text(h,colX[i]+1,y+4.5);});y+=7;
+  if(!r.degs||!r.degs.length){doc.setTextColor(...DG);doc.setFontSize(9);doc.text('Aucune dégradation relevée',M,y+8);y+=15;}
+  else{r.degs.forEach((d,idx)=>{const rH=d.gps?14:10;if(y+rH>270){doc.addPage();y=20;}const fill=idx%2===0?[255,255,255]:[248,248,248];doc.setFillColor(...fill);cols.forEach((_,i)=>doc.rect(colX[i],y,cols[i],rH,'F'));doc.setDrawColor(220,220,220);cols.forEach((_,i)=>doc.rect(colX[i],y,cols[i],rH,'S'));const dc=IC[d.iq]||[100,100,100];doc.setFillColor(...dc);doc.roundedRect(colX[2]+1,y+1,cols[2]-2,d.gps?8:6,1,1,'F');doc.setTextColor(...WH);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text(d.iq,colX[2]+cols[2]/2,y+(d.gps?6:4.5),{align:'center'});doc.setTextColor(...DG);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text(d.elem.slice(0,30),colX[0]+1,y+4.5);doc.text((d.loc||'—').slice(0,14),colX[1]+1,y+4.5);doc.text(d.gv+'/3',colX[3]+1,y+4.5);doc.text((d.urg||'—').slice(0,10),colX[4]+1,y+4.5);doc.text((d.obs||'').slice(0,20),colX[5]+1,y+4.5);if(d.gps){doc.setTextColor(15,110,86);doc.setFontSize(6);doc.text('⊙ '+d.gps.lat.toFixed(4)+'°N '+d.gps.lng.toFixed(4)+'°E',colX[0]+1,y+10);}y+=rH;});}
+  y+=5;if(y>255){doc.addPage();y=20;}y=sh('COTATION GLOBALE',y);
+  doc.setFillColor(...ic);doc.roundedRect(M,y,30,18,3,3,'F');doc.setTextColor(...WH);doc.setFontSize(20);doc.setFont('helvetica','bold');doc.text(r.cotation,M+15,y+12,{align:'center'});
+  doc.setTextColor(...DG);doc.setFontSize(10);doc.setFont('helvetica','bold');doc.text(iqLabel(r.cotation),M+36,y+8);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text(iqDesc(r.cotation),M+36,y+14);y+=22;
+  if(r.conclusion){y+=2;if(y>262){doc.addPage();y=20;}y=sh('CONCLUSION & RECOMMANDATIONS',y);const lines=doc.splitTextToSize(r.conclusion,CW-4);doc.setTextColor(...DG);doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.text(lines,M+2,y);y+=lines.length*4.5+4;}
+  if(r.travaux){doc.setTextColor(...DG);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text('Travaux estimés :',M,y);doc.setFont('helvetica','normal');doc.text(r.travaux+' €',M+35,y);y+=5;}
+  if(r.prochaine){doc.setFont('helvetica','bold');doc.text('Prochaine inspection :',M,y);doc.setFont('helvetica','normal');doc.text(r.prochaine,M+40,y);y+=5;}
+  ft(doc,2,W);
+  // P3 : photos
+  if(phs.length){
+    pp(60,'Photos…');await tk(30);
+    doc.addPage();y=20;doc.setFillColor(...BL);doc.rect(0,0,W,12,'F');doc.setTextColor(...WH);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(r.oaNom+' — Annexe photographique',M,8);doc.text(r.date,W-M,8,{align:'right'});
+    y=18;y=sh('ANNEXE PHOTOGRAPHIQUE ('+phs.length+' photo(s))',y);y+=2;
+    const pW=(CW-8)/3,pH=pW*0.75;
+    for(let i=0;i<phs.length;i++){const p=phs[i];const col=i%3;const xP=M+(pW+4)*col;if(col===0&&i>0){y+=pH+14;}if(y+pH+14>270){doc.addPage();y=20;}
+      try{doc.addImage(p.data,'JPEG',xP,y,pW,pH);doc.setDrawColor(200,200,200);doc.rect(xP,y,pW,pH,'S');doc.setFillColor(...LG);doc.rect(xP,y+pH,pW,10,'F');doc.setTextColor(...DG);doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.text(p.num,xP+1,y+pH+4);if(p.gps){doc.setTextColor(15,110,86);doc.setFontSize(5.5);doc.text('⊙ '+p.gps.lat.toFixed(4)+'°N '+p.gps.lng.toFixed(4)+'°E',xP+1,y+pH+8);}else{doc.setTextColor(150,150,150);doc.setFontSize(5.5);doc.text('Non géolocalisée',xP+1,y+pH+8);}if(p.annotated){doc.setTextColor(46,127,232);doc.text('Annotée ✏',xP+pW-14,y+pH+8);}}catch(e){}
+    }
+    ft(doc,3,W);
+  }
+  // P4 : signatures
+  pp(82,'Signatures…');await tk(20);
+  doc.addPage();doc.setFillColor(...BL);doc.rect(0,0,W,12,'F');doc.setTextColor(...WH);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(r.oaNom+' — Validation & signatures',M,8);doc.text(r.date,W-M,8,{align:'right'});
+  y=24;doc.setFillColor(...ic);doc.roundedRect(M,y,CW,18,3,3,'F');doc.setTextColor(...WH);doc.setFontSize(22);doc.setFont('helvetica','bold');doc.text(r.cotation,M+16,y+12,{align:'center'});doc.setFontSize(12);doc.text(iqLabel(r.cotation),M+34,y+9);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text(iqDesc(r.cotation),M+34,y+15);y+=24;
+  const sW=(CW-8)/3;[{ti:'Inspecteur',nm:r.inspecteur,rl:'Ingénieur OA'},{ti:'Responsable gestionnaire',nm:'Chef de district',rl:oa.gestionnaire||'DIR'},{ti:'Validation bureau',nm:'Ingénieur référent',rl:'Bureau de contrôle'}].forEach((s,i)=>{const xS=M+(sW+4)*i;doc.setFillColor(...LG);doc.rect(xS,y,sW,45,'F');doc.setDrawColor(180,180,180);doc.rect(xS,y,sW,45,'S');doc.setFillColor(...BL);doc.rect(xS,y,sW,8,'F');doc.setTextColor(...WH);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(s.ti,xS+sW/2,y+5,{align:'center'});doc.setTextColor(...DG);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text(s.nm,xS+2,y+14);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text(s.rl,xS+2,y+20);doc.setDrawColor(150,150,150);doc.line(xS+2,y+36,xS+sW-2,y+36);doc.setFontSize(7);doc.setTextColor(150,150,150);doc.text('Signature + cachet',xS+2,y+41);doc.text('Date : ___/___/______',xS+2,y+45);});y+=52;
+  doc.setFillColor(...LG);doc.rect(M,y,CW,10,'F');doc.setTextColor(120,120,120);doc.setFontSize(7);doc.setFont('helvetica','italic');doc.text('Document généré par InspectOA le '+new Date().toLocaleString('fr-FR'),M+2,y+4);doc.text('Réf. RPT-'+r.id.slice(-6).toUpperCase()+' — IQOA / CEREMA',M+2,y+8);
+  ft(doc,doc.getNumberOfPages(),W);
+  pp(100,'Téléchargement…');await tk(200);
+  doc.save('InspectOA_'+r.oaNom.replace(/[^a-zA-Z0-9]/g,'_')+'_'+r.date.replace(/\//g,'-')+'.pdf');
+  closePP();toast('PDF généré et téléchargé ✓');
+}
+
+function ft(doc,n,W){doc.setFillColor(27,58,107);doc.rect(0,285,W,12,'F');doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');doc.text('InspectOA v4 — Rapport IQOA',15,291);doc.text('Page '+n,W-15,291,{align:'right'});}
+function pp(p,l){el('pdf-overlay').classList.add('on');el('ppf').style.width=p+'%';el('ppl').textContent=l;}
+function closePP(){el('pdf-overlay').classList.remove('on');}
+function tk(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ══════════════════════════════════════════════════════════════
+// Utils
+// ══════════════════════════════════════════════════════════════
+function el(id){return document.getElementById(id);}
+function bCls(c){return{1:'b1',2:'b2','2E':'b2e',3:'b3','3U':'b3u','—':'b2'}[c]||'b2'}
+function iqLabel(c){return{'1':'Bon état','2':'Entretien spécialisé','2E':'Entretien spécialisé urgent','3':'Travaux à programmer','3U':'Travaux urgents','—':'Non coté'}[c]||'—'}
+function iqDesc(c){return{'1':'Structure saine, entretien courant suffisant.','2':'Désordres mineurs sans incidence structurelle.','2E':'Désordres à risque d\'évolution rapide — sous 1 an.','3':'Désordres importants — travaux à programmer.','3U':'Désordres graves — intervention immédiate.'}[c]||''}
+function toast(msg){const t=el('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800);}
+
+// Réseau
+window.addEventListener('online', ()=>{toast('Connexion rétablie');refreshStats();});
+window.addEventListener('offline',()=>{toast('Mode hors ligne');});
+
+// ══════════════════════════════════════════════════════════════
+// Init
+// ══════════════════════════════════════════════════════════════
+(async()=>{
+  await idbOpen();
+  el('hd').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  renderHome();
+  startGPS();
+})();
+</script>
+</body>
+</html>
